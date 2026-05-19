@@ -1,17 +1,13 @@
-import { BarLoader } from "react-spinners";
 import { Suspense } from "react";
+import { PageLoader } from "@/components/ui/page-loader";
 
 export default function Layout({ children }) {
   return (
     <div className="px-5">
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold gradient-title">Industry Insights</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <h1 className="gradient-title text-6xl font-bold">Industry Insights</h1>
       </div>
-      <Suspense
-        fallback={<BarLoader className="mt-4" width={"100%"} color="gray" />}
-      >
-        {children}
-      </Suspense>
+      <Suspense fallback={<PageLoader />}>{children}</Suspense>
     </div>
   );
 }

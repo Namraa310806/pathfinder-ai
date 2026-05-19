@@ -1,13 +1,20 @@
-export async function GET() {
-  const stats = {
-    studentsGuided: "10k+",
-    careerMatches: "94%",
-    successRate: "92%",
-    avgRating: "4.8",
-  };
+import { NextResponse } from "next/server";
 
-  return new Response(JSON.stringify(stats), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+export async function GET() {
+  try {
+    const stats = {
+      studentsGuided: "10k+",
+      careerMatches: "94%",
+      successRate: "92%",
+      avgRating: "4.8",
+    };
+
+    return NextResponse.json(stats);
+  } catch (err) {
+    console.error("[api/stats]", err);
+    return NextResponse.json(
+      { error: "Failed to load stats" },
+      { status: 500 }
+    );
+  }
 }

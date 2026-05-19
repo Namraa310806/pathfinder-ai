@@ -8,6 +8,8 @@ const nextConfig = {
       },
     ],
   },
+  // Clerk and Prisma should not be bundled into edge/server unnecessarily
+  serverExternalPackages: ["@prisma/client"],
 };
 
 export default nextConfig;
