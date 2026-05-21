@@ -13,6 +13,7 @@ import {
   GraduationCap,
   ChevronDown,
   StarsIcon,
+  ScanText,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -46,7 +47,7 @@ export default function Header() {
     return () => (mounted = false);
   }, []);
 
-  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo.png" : "/dark-logo.png";
+  const logoSrc = mounted && resolvedTheme === "dark" ? "/white-logo.png" : "/logo.png";
 
   /** guarded navigation */
   const go = async (href) => {
@@ -136,6 +137,22 @@ export default function Header() {
                 >
                   <GraduationCap className="h-4 w-4" />
                   Interview Prep
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => go("/ai-assistant")}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Bot className="h-4 w-4" />
+                  AI Assistant
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => go("/ats-analyzer")}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <ScanText className="h-4 w-4" />
+                  ATS Analyzer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
