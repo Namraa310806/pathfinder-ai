@@ -97,7 +97,7 @@ IMPORTANT: Return ONLY valid JSON. No markdown, no explanation outside the JSON.
 }
 
 /**
- * Retrieves ATS analyses for the current user.
+ * Fetches all ATS analyses for the signed-in user, newest first.
  */
 export async function getATSAnalyses() {
   try {
@@ -155,12 +155,12 @@ export async function deleteATSAnalysis(id) {
       return { success: false, errors: { _form: ["Unauthorized: you do not own this analysis."] } };
     }
 
-   await db.atsAnalysis.deleteMany({
-  where: {
-    id: existing.id,
-    userId: user.id,
-  },
-});
+    await db.atsAnalysis.deleteMany({
+      where: {
+        id: existing.id,
+        userId: user.id,
+      },
+    });
 
     revalidatePath("/ats-analyzer");
     return { success: true };
