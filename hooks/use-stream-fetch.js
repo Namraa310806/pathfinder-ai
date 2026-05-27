@@ -86,7 +86,7 @@ export default function useStreamFetch() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/generate", {
+      const fetchOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
