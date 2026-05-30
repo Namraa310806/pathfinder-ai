@@ -11,16 +11,35 @@ import {
   preparePromptForGeneration,
   buildSseErrorResponse,
 } from "@/lib/prompt-guard";
+import {
+  buildCorsDeniedResponse,
+  resolveCorsPolicy,
+} from "@/lib/cors";
 
-const SSE_HEADERS = {
+const SSE_BASE_HEADERS = {
   "Content-Type": "text/event-stream; charset=utf-8",
   "Cache-Control": "no-cache, no-store, must-revalidate, no-transform",
   Connection: "keep-alive",
   "X-Accel-Buffering": "no",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
+
+function buildSseHeaders(request) {
+  const corsPolicy = resolveCorsPolicy(request);
+
+  if (!corsPolicy.allowed) {
+    return null;
+  }
+
+  const headers = new Headers(SSE_BASE_HEADERS);
+
+  if (corsPolicy.headers) {
+    corsPolicy.headers.forEach((value, key) => {
+      headers.set(key, value);
+    });
+  }
+
+  return headers;
+}
 
 const encodeSseEvent = (encoder, event, payload) => {
   const safePayload = payload ?? {};
@@ -42,14 +61,26 @@ const extractChunkText = (chunk) => {
   }
 };
 
-export async function OPTIONS() {
+export async function OPTIONS(request) {
+  const headers = buildSseHeaders(request);
+
+  if (!headers) {
+    return buildCorsDeniedResponse();
+  }
+
   return new Response(null, {
     status: 204,
-    headers: SSE_HEADERS,
+    headers,
   });
 }
 
 export async function POST(request) {
+  const headers = buildSseHeaders(request);
+
+  if (!headers) {
+    return buildCorsDeniedResponse();
+  }
+
   const { userId } = await auth();
   const endpoint = "/api/generate";
   const subject = getRateLimitIdentifier(request, userId);
@@ -262,6 +293,6 @@ Rules:
   });
 
   return new Response(stream, {
-    headers: SSE_HEADERS,
+    headers,
   });
 }
