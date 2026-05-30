@@ -16,7 +16,7 @@ vi.mock("../lib/cache/index.js", async () => {
     ...actual,
     cachedGenerateGeminiContent: mocks.cachedGenerateGeminiContent,
   };
-}));
+});
 
 import {
   generateIndustryInsightData,
