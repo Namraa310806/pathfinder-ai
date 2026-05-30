@@ -3,6 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { generateGeminiContent } from "@/lib/gemini";
+import { cachedGenerateGeminiContent, QUIZ_CACHE_TTL_MS, generateCacheKey } from "@/lib/cache";
 import { buildSecurePrompt } from "@/lib/prompt-safety";
 
 // Fallback MCQ questions in case Gemini generation fails
@@ -133,7 +134,7 @@ export async function generateQuiz(category = "Technical") {
   if (!user) throw new Error("User not found");
 
   const normalizedSkills = user.skills
-    ? Array.from(new Set(user.skills.map((s) => String(s).trim()).filter(Boolean)))
+    ? Array.from(new Set(user.skills.map((s) => String(s).trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b))
     : [];
 
   const categoryPrompts = {
@@ -184,7 +185,10 @@ Return ONLY a valid JSON object matching this schema. Do not output any markdown
   });
 
   try {
-    const result = await generateGeminiContent(prompt);
+    const result = await cachedGenerateGeminiContent(prompt, {}, {
+      key: generateCacheKey("quiz", user.industry || "software", normalizedSkills, category),
+      ttl: QUIZ_CACHE_TTL_MS,
+    });
     const text = result.response.text();
     const cleaned = text.replace(/```(?:json)?[\r\n]?/g, "").trim();
     const quiz = JSON.parse(cleaned);

@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { generateGeminiContent } from "@/lib/gemini";
+import { ATS_ANALYSIS_CACHE_TTL_MS, cachedGenerateGeminiContent, generateCacheKey } from "@/lib/cache";
 import { buildSecurePrompt } from "@/lib/prompt-safety";
 import { validateInput } from "@/lib/validate";
 import { atsAnalysisSchema } from "@/lib/schemas/forms";
@@ -63,7 +63,10 @@ Be specific and actionable. Include at least 5 matched keywords (if present), at
 IMPORTANT: Return ONLY valid JSON. No markdown, no explanation outside the JSON.`,
     });
 
-    const result = await generateGeminiContent(prompt);
+    const result = await cachedGenerateGeminiContent(prompt, {}, {
+      key: generateCacheKey("ats", resumeContent, jobDescription),
+      ttl: ATS_ANALYSIS_CACHE_TTL_MS,
+    });
     const text = result.response.text().trim();
 
     const cleanJsonText = text.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
