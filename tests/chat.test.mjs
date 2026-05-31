@@ -21,8 +21,15 @@ vi.mock("@/lib/prompt-safety", () => ({
 import { chatWithGemini } from "../actions/chat.js";
 
 describe("chatWithGemini", () => {
-  it("requires a prompt", async () => {
-    await expect(chatWithGemini("")).rejects.toThrow("Prompt is required");
+  it("returns validation errors for an empty prompt", async () => {
+    await expect(chatWithGemini("")).resolves.toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.objectContaining({
+          prompt: expect.any(Array),
+        }),
+      })
+    );
   });
 
   it("wraps the prompt before sending it to Gemini", async () => {
