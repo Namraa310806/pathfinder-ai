@@ -38,24 +38,24 @@ export async function updateUser(data) {
         /* -----------------------------------------------------------
          * 1. Ensure an IndustryInsight row exists (create if missing)
          * --------------------------------------------------------- */
-        let industryInsight = await tx.industryInsight.findUnique({
-          where: { industry: data.industry },
-        });
+        const industryInsight = precomputedInsights
+          ? await tx.industryInsight.upsert({
+              where: { industry: data.industry },
+              update: {},
+              create: {
+                industry: data.industry,
+                ...precomputedInsights,
+                nextUpdate: getIndustryInsightRefreshTime(),
+              },
+            })
+          : await tx.industryInsight.findUnique({
+              where: { industry: data.industry },
+            });
 
         if (!industryInsight) {
-          // If industryInsight is missing, we must use precomputedInsights.
-          // We moved the AI call outside the transaction to prevent connection pool exhaustion.
-          if (!precomputedInsights) {
-            throw new Error("Industry insights are currently unavailable. Please try again.");
-          }
-
-          industryInsight = await tx.industryInsight.create({
-            data: {
-              industry: data.industry,
-              ...precomputedInsights,
-              nextUpdate: getIndustryInsightRefreshTime(),
-            },
-          });
+          throw new Error(
+            "Industry insights are currently unavailable. Please try again."
+          );
         }
 
         /* ----------------------------------------------
@@ -113,9 +113,11 @@ export async function getUserOnboardingStatus() {
     const email = clerkUser.emailAddresses?.[0]?.emailAddress;
     if (!email) throw new Error("User email not found in Clerk!");
 
-    /* 2 ▸ create a brand-new row */
-    user = await db.user.create({
-      data: {
+    /* 2 ▸ create a brand-new row (use upsert to prevent race conditions) */
+    user = await db.user.upsert({
+      where: { clerkUserId: userId },
+      update: {},
+      create: {
         clerkUserId: userId,
         email,
         name: clerkUser.firstName ?? "",
