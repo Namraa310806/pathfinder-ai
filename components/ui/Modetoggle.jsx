@@ -13,16 +13,20 @@ export function ModeToggle() {
   const isAnimating = useRef(false)
   const tweenRef = useRef(null)
   const overlayRef = useRef(null)
+  const isMountedRef = useRef(true)
 
   useEffect(() => {
     setMounted(true)
+    isMountedRef.current = true
     return () => {
+      isMountedRef.current = false
       if (tweenRef.current) {
         tweenRef.current.kill()
       }
       if (overlayRef.current && overlayRef.current.parentNode) {
         overlayRef.current.parentNode.removeChild(overlayRef.current)
       }
+      isAnimating.current = false
     }
   }, [])
 
@@ -68,7 +72,9 @@ export function ModeToggle() {
       duration: 0.6,
       ease: "power2.inOut",
       onComplete: () => {
-        setTheme(nextTheme)
+        if (isMountedRef.current) {
+          setTheme(nextTheme)
+        }
         
         tweenRef.current = gsap.to(overlay, {
           opacity: 0,
