@@ -208,7 +208,7 @@ export async function POST(request) {
 
   return new Response(cachedStream, {
     headers: {
-      ...SSE_HEADERS,
+      ...SSE_BASE_HEADERS,
       "X-Cache": "HIT",
     },
   });
@@ -260,7 +260,7 @@ export async function POST(request) {
 
       return new Response(cachedStream, {
         headers: {
-          ...SSE_HEADERS,
+          ...SSE_BASE_HEADERS,
           "X-Cache": "DEDUP",
         },
       });
