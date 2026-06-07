@@ -39,6 +39,7 @@ model User {
   linkedinOptimizations LinkedInOptimization[]
   networkingEmails     NetworkingEmail[]
   projectIdeas         ProjectIdea[]
+  resumeGenerations    ResumeGeneration[]
   settings             UserSettings?
 
   exportRecords ExportRecord[]
@@ -282,6 +283,17 @@ model ProjectIdea {
   targetRole     String
   skillGap       String
   ideas          Json
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ResumeGeneration {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobDescription String   @db.Text
+  content        Json
   createdAt      DateTime @default(now())
 
   @@index([userId])
