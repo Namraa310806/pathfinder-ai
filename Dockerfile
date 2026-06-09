@@ -16,7 +16,7 @@ COPY package.json package-lock.json ./
 # Copy Prisma schema BEFORE npm ci so postinstall (prisma generate) can find it
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN npm install
 
 # Stage 3: Build the Next.js application
 FROM base AS builder
