@@ -585,23 +585,23 @@ export async function saveQuizResult(questions, answers, score, category = "Tech
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const validation = validateInput(quizResultSaveSchema, { questions, answers, category });
-  if (!validation.success) return { success: false, errors: validation.errors };
+  const initialValidation = validateInput(quizResultSaveSchema, { questions, answers, category });
+  if (!initialValidation.success) return { success: false, errors: initialValidation.errors };
 
   const feedbackLimit = await checkRateLimit(userId, "quizFeedback");
   if (!feedbackLimit.allowed) {
     throw new Error(`Quiz feedback limit reached. Resets in ${formatResetTime(feedbackLimit.resetAt)}.`);
   }
 
-  const validation = validateInput(quizResultSaveSchema, { questions, answers, score, category });
-  if (!validation.success) return { success: false, errors: validation.errors };
+  const fullValidation = validateInput(quizResultSaveSchema, { questions, answers, score, category });
+  if (!fullValidation.success) return { success: false, errors: fullValidation.errors };
 
   const {
     questions: validatedQuestions,
     answers: validatedAnswers,
     score: validatedScore,
     category: validatedCategory,
-  } = validation.data;
+  } = fullValidation.data;
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },

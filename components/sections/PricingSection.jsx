@@ -1,54 +1,79 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Check, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/motion";
 
 const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "/month",
-    desc: "For individuals just getting started.",
-    features: ["Basic features", "Up to 3 projects", "Community support"],
-    cta: "Get Started",
-    href: "/sign-up",
-    popular: false,
-  },
-  {
-    name: "Pro",
-    price: "$29",
-    period: "/month",
-    desc: "For professionals.",
-    features: ["Everything in Free", "Unlimited projects", "Priority support"],
-    cta: "Upgrade to Pro",
-    href: "/sign-up",
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    desc: "For large teams.",
-    features: ["Everything in Pro", "Custom integrations", "Dedicated account manager"],
-    cta: "Contact Sales",
-    href: "/contact",
-    popular: false,
-  }
+{
+name: "Free",
+price: "$0",
+period: "forever",
+desc: "For individuals looking to try out AI-powered career tools.",
+features: [
+"1 AI Resume Roast",
+"Basic Career Roadmap",
+"Limited AI Interview Practice",
+"Community Support",
+],
+cta: "Get Started",
+href: "/onboarding",
+popular: false,
+},
+{
+name: "Pro",
+price: "$15",
+period: "/month",
+desc: "Everything you need to accelerate your career and land offers.",
+features: [
+"Unlimited Resume Roasts",
+"Advanced Career Roadmaps",
+"Unlimited AI Mock Interviews",
+"Priority Email Support",
+],
+cta: "Start Free Trial",
+href: "/onboarding",
+popular: true,
+},
+{
+name: "Enterprise",
+price: "$49",
+period: "/month",
+desc: "For teams and organizations looking to upskill their workforce.",
+features: [
+"Everything in Pro",
+"Custom Career Frameworks",
+"Team Analytics Dashboard",
+"Dedicated Success Manager",
+],
+cta: "Contact Sales",
+href: "/contact",
+popular: false,
+},
 ];
 
 export function PricingSection() {
-  return (
-    <section id="pricing" className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <FadeUp>
-            <h2 className="text-4xl font-bold mb-4">Simple, transparent pricing</h2>
-            <p className="text-xl text-muted-foreground">No surprise fees.</p>
-          </FadeUp>
-        </div>
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+return ( <section
+   id="pricing"
+   className="relative py-8 md:py-12 bg-muted/30 overflow-hidden"
+ > <div className="container mx-auto px-4 md:px-6"> <FadeUp className="max-w-3xl mx-auto text-center mb-16 space-y-4"> <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold uppercase tracking-widest text-primary">
+Pricing </span>
+
+```
+      <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
+        Invest in your{" "}
+        <span className="text-gradient-primary">career</span>
+      </h2>
+
+      <p className="text-lg text-muted-foreground">
+        Simple, transparent pricing designed for every stage of your
+        professional journey.
+      </p>
+    </FadeUp>
+
+    <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
       {plans.map((plan) => (
         <StaggerItem key={plan.name}>
           <motion.div
@@ -67,21 +92,37 @@ export function PricingSection() {
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
+                <h3 className="text-lg font-bold text-foreground">
+                  {plan.name}
+                </h3>
+
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-foreground">{plan.price}</span>
+                  <span className="text-4xl font-black text-foreground">
+                    {plan.price}
+                  </span>
+
                   {plan.period && (
-                    <span className="text-sm text-muted-foreground">{plan.period}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {plan.period}
+                    </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">{plan.desc}</p>
+
+                <p className="text-sm text-muted-foreground mt-2">
+                  {plan.desc}
+                </p>
               </div>
 
               <ul className="space-y-3">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
+                {plan.features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3"
+                  >
                     <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm text-muted-foreground">{f}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -91,7 +132,7 @@ export function PricingSection() {
                   className={`w-full h-12 rounded-xl font-bold ${
                     plan.popular
                       ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                      : "border border-border bg-card text-white hover:bg-primary hover:text-primary-foreground"
+                      : "border border-border bg-card text-foreground hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   {plan.cta}
@@ -103,7 +144,9 @@ export function PricingSection() {
         </StaggerItem>
       ))}
     </StaggerContainer>
-      </div>
-    </section>
-  );
+  </div>
+</section>
+```
+
+);
 }
