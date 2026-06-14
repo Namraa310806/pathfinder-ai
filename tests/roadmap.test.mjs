@@ -308,7 +308,7 @@ describe("generateCareerRoadmap", () => {
     await expect(generateCareerRoadmap()).rejects.toThrow("Roadmap generation limit reached");
   });
 
-  it("falls back gracefully when AI generation fails", async () => {
+  it("throws when AI generation fails", async () => {
     const { generateCareerRoadmap } = await import("../actions/roadmap.js");
 
     actionMocks.auth.mockResolvedValue({ userId: "user-1" });
@@ -327,19 +327,8 @@ describe("generateCareerRoadmap", () => {
         bio: "A passionate developer.",
       });
     actionMocks.generateGeminiContent.mockRejectedValue(new Error("AI service unavailable"));
-    actionMocks.upsert.mockResolvedValue({
-      id: "roadmap-2",
-      content: {
-        milestones: [],
-        totalEstimatedTime: "12-18 months",
-        summary: "A personalized roadmap...",
-      },
-    });
 
-    const result = await generateCareerRoadmap();
-
-    expect(result._errorCode).toBe("UNKNOWN");
-    expect(actionMocks.upsert).toHaveBeenCalled();
+    await expect(generateCareerRoadmap()).rejects.toThrow("AI returned an unexpected format.");
   });
 });
 
@@ -365,7 +354,8 @@ describe("getRoadmap", () => {
     expect(actionMocks.roadmapFindUnique).toHaveBeenCalledWith({
       where: { userId: "db-user-1" },
     });
-    expect(result.id).toBe("roadmap-1");
+    expect(result.roadmap.id).toBe("roadmap-1");
+    expect(result.error).toBeNull();
   });
 
   it("returns null when user is not authenticated", async () => {
@@ -374,7 +364,7 @@ describe("getRoadmap", () => {
     actionMocks.auth.mockResolvedValue({ userId: null });
 
     const result = await getRoadmap();
-    expect(result).toBeNull();
+    expect(result).toEqual({ roadmap: null, error: null });
   });
 
   it("returns null when user is not found in DB", async () => {
@@ -384,6 +374,6 @@ describe("getRoadmap", () => {
     actionMocks.findUnique.mockResolvedValue(null);
 
     const result = await getRoadmap();
-    expect(result).toBeNull();
+    expect(result).toEqual({ roadmap: null, error: null });
   });
 });
