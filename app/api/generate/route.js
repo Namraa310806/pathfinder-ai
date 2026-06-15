@@ -212,7 +212,7 @@ Rules:
 
   const existingCachedResponse = await getCachedResponse(
     cacheUser,
-    restrictedPrompt
+    promptCheck.prompt
   );
 
   if (existingCachedResponse) {
