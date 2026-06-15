@@ -1,8 +1,7 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-<<<<<<< HEAD
 import {
   FileText,
   ScanSearch,
@@ -32,15 +31,9 @@ import {
   Users,
   BookOpen,
   Sparkles,
-  ArrowRight
-=======
-import { 
-  ScanSearch, Mic, FileText, Mail, Briefcase, ChevronRight,
-  Flame, Linkedin, Star, Video, LayoutList, Lightbulb, 
-  DollarSign, Calculator, Send, ArrowRightLeft, CalendarClock,
-  Coffee, ShieldAlert, Code2, HeartPulse, Rocket,
-  Home, Workflow, CalendarHeart, Globe, MapPin, Users, Flag, HandCoins, Target, LineChart, Brain, BookOpen,BrainCircuit
->>>>>>> f92b694 (emnnhancement)
+  ArrowRight,
+  RocketIcon,
+  Crown
 } from "lucide-react";
 
 const TOOL_CATEGORIES = [
@@ -93,6 +86,8 @@ const TOOL_CATEGORIES = [
       { name: "Culture Fit", desc: "Company matching", icon: Users, color: "bg-pink-500/10 text-pink-500 border-pink-500/20", href: "/culture-fit" },
       { name: "Offer Risk", desc: "Avoid bad moves", icon: ShieldCheck, color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20", href: "/offer-risk" },
       { name: "Career Library", desc: "Guides and playbooks", icon: BookOpen, color: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20", href: "/career-library" },
+      { name: "Founder Readiness", desc: "Startup evaluation", icon: RocketIcon, color: "bg-orange-500/10 text-orange-500 border-orange-500/20", href: "/founder-readiness" },
+      { name: "Executive Presence", desc: "Command the room", icon: Crown, color: "bg-purple-500/10 text-purple-500 border-purple-500/20", href: "/executive-presence" },
     ]
   }
 ];
