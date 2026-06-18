@@ -7,6 +7,7 @@ import { generateAIInsights } from "./dashboard";
 import { getIndustryInsightRefreshTime } from "@/lib/industry-insights";
 import { validateInput } from "@/lib/validate";
 import { userProfileSchema } from "@/lib/schemas/forms";
+import { withAuth } from "@/lib/auth-errors";
 
 /**
  * Updates the current user's profile with industry and other info.
@@ -38,10 +39,7 @@ export async function updateUser(data) {
     });
 
     if (!existingInsight) {
-      precomputedInsights = await generateAIInsights(
-        profileData.industry,
-        profileData
-      );
+      precomputedInsights = await generateAIInsights(profileData.industry);
     }
   } catch (e) {
     console.error("Failed to generate insights pre-transaction:", e);
