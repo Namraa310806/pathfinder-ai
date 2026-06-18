@@ -1,13 +1,15 @@
 "use server";
 import { db } from "@/lib/prisma";
+import { UNAUTHORIZED_RESPONSE } from "@/lib/auth-errors";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { buildSecurePrompt, parseAIJson } from "@/lib/prompt-safety";
 import { generateGeminiContent } from "@/lib/gemini";
+import { USER_NOT_FOUND_MESSAGE } from "@/lib/errors";
 
 export async function generateAssessmentStrategy(company, assessmentType) {
   const { userId } = await auth();
-  if (!userId) return { success: false, errors: { _form: ["Unauthorized"] } };
+  if (!userId) return UNAUTHORIZED_RESPONSE;
 
   if (!company || !assessmentType) {
     return { success: false, errors: { _form: ["Company and Assessment Type are required."] } };
@@ -18,7 +20,7 @@ export async function generateAssessmentStrategy(company, assessmentType) {
   });
 
   if (!user) {
-    return { success: false, errors: { _form: ["User not found."] } };
+    return { success: false, errors: { _form: [USER_NOT_FOUND_MESSAGE] } };
   }
 
   const prompt = buildSecurePrompt({
