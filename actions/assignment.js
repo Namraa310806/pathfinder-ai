@@ -5,6 +5,7 @@ import { buildUserLookup } from "@/lib/user-query";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { buildSecurePrompt, parseAIJson } from "@/lib/prompt-safety";
+import { getActionContext } from "@/lib/action-context";
 import { generateGeminiContent } from "@/lib/gemini";
 import { USER_NOT_FOUND_RESPONSE } from "@/lib/user-not-found";
 
@@ -60,7 +61,7 @@ export async function gradeAssignment(promptText, solutionText) {
 }
 
 export async function getAssignmentGrades() {
-  const { userId } = await auth();
+  const { userId } = await getActionContext();
   if (!userId) return { success: false, data: [] };
 
   const user = await db.user.findUnique(buildUserLookup(userId));
