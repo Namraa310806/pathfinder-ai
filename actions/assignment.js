@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { buildUserLookup } from "@/lib/user-query";
+import { getAuthenticatedHistoryResponse } from "@/lib/history-response-auth";
 import { createSuccessResponse } from "@/lib/action-success";
 import { auth } from "@clerk/nextjs/server";
 import { logActionError } from "@/lib/action-logger";
