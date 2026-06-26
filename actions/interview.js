@@ -620,6 +620,7 @@ export async function saveQuizResult(sessionIdOrQuestions, answers, category = "
 
     let questions = [];
     let sessionId = null;
+    const cacheStore = getCacheStore();
 
     if (Array.isArray(sessionIdOrQuestions)) {
       questions = sessionIdOrQuestions;
@@ -651,74 +652,6 @@ export async function saveQuizResult(sessionIdOrQuestions, answers, category = "
     if (!feedbackLimit.allowed) {
       throw new Error(`Quiz feedback limit reached. Resets in ${formatResetTime(feedbackLimit.resetAt)}.`);
     }
-
-    let questions;
-    let cacheKey = null;
-
-    if (Array.isArray(sessionIdOrQuestions)) {
-      questions = sessionIdOrQuestions;
-    } else {
-      const sessionId = sessionIdOrQuestions;
-      if (!sessionId) {
-        throw new Error("Session ID is required.");
-      }
-      cacheKey = generateCacheKey("quiz-session", userId, sessionId);
-      questions = await cacheStore.get(cacheKey);
-      if (!questions) {
-        throw new Error("Quiz session expired or not found. Please start a new quiz.");
-      }
-    }
-
-    const profileContext = buildUserProfileContext(user);
-
-    const sanitizedAnswers = Array.isArray(answers)
-      ? answers.slice(0, questions.length)
-      : [];
-
-    while (sanitizedAnswers.length < questions.length) {
-      sanitizedAnswers.push(null);
-    }
-
-    // Map user answers to question outcomes and compute score on the server
-    const sanitizedAnswers = Array.isArray(answers)
-      ? answers.slice(0, questions.length)
-      : [];
-
-    while (sanitizedAnswers.length < questions.length) {
-      sanitizedAnswers.push(null);
-    }
-
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-    if (!user) throw new Error("User not found");
-
-    let questions = [];
-    let cacheKey = null;
-    const cacheStore = getCacheStore();
-
-    if (Array.isArray(sessionIdOrQuestions)) {
-      questions = sessionIdOrQuestions;
-    } else {
-      const sessionId = sessionIdOrQuestions;
-      if (!sessionId) {
-        throw new Error("Session ID is required.");
-      }
-      cacheKey = generateCacheKey("quiz-session", userId, sessionId);
-      questions = await cacheStore.get(cacheKey);
-      if (!questions) {
-        throw new Error("Quiz session expired or not found. Please start a new quiz.");
-      }
-    }
-
-    const sanitizedAnswers = Array.isArray(answers)
-      ? answers.slice(0, questions.length)
-      : [];
-
-    while (sanitizedAnswers.length < questions.length) {
-      sanitizedAnswers.push(null);
-    }
-
     let correctCount = 0;
     const questionResults = [];
     const wrongAnswers = [];

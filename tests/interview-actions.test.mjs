@@ -54,13 +54,15 @@ vi.mock("@/lib/gemini", () => ({
 
 vi.mock("@/lib/cache", async () => {
   const actual = await vi.importActual("@/lib/cache");
+  const mockCacheStore = {
+    get: mocks.cacheGet,
+    set: mocks.cacheSet,
+    delete: mocks.cacheDelete,
+  };
   return {
     ...actual,
-    cacheStore: {
-      get: mocks.cacheGet,
-      set: mocks.cacheSet,
-      delete: mocks.cacheDelete,
-    },
+    cacheStore: mockCacheStore,
+    getCacheStore: () => mockCacheStore,
   };
 });
 
